@@ -6,10 +6,10 @@ import time
 score = 0
 
 mapping = {
-    "↑": "W",
-    "↓": "S",
-    "←": "A",
-    "→": "D"
+    "↑": "w",
+    "↓": "s",
+    "←": "a",
+    "→": "d"
 }
 
 # 1 = Easy
@@ -28,7 +28,7 @@ def get_choices():
         return [str(i) for i in range(10)]
     elif difficulty == "3":  # Hard
         return [chr(i) for i in range(65, 91)]  # A–Z
-    elif difficulty == "4":  # Very Hard
+    elif difficulty == "4":  # Impossible
         return ["cat", "moon", "red", "blue", "star", "note", "time", "fire"]
     else:
         return None
@@ -42,15 +42,14 @@ def validate(answer, user_answer):
     for i in range(len(answer)):
         if i >= len(user_answer):
             return False  # user kurang huruf
-
         if(difficulty == "4"): # eksklusif very hard validasi sensitif
             if answer[i] != user_answer[i]:
                 return False  # salah
         elif(difficulty == "1"): # eksklusif panah validasi menggunakan WASD
-            if arrowToWasd(answer[i]).upper() != user_answer[i].upper():
+            if arrowToWasd(answer[i]).lower() != user_answer[i].lower():
                 return False # salah
         else:
-            if answer[i].upper() != user_answer[i].upper():
+            if answer[i].lower() != user_answer[i].lower():
                 return False  # salah
     return True
 
@@ -97,7 +96,10 @@ def main():
             time.sleep(1)
         else:
             print("\nSalah! Permainan berakhir.")
-            print("Urutan yang benar: ", " ".join(sequence))
+            print("Jawaban Anda: ", answer)
+            if(difficulty == "1"):
+                print("Urutan yang benar (WASD): ", arrowToWasd("".join(sequence)))
+            print("Urutan yang benar: ", ("".join(sequence)).lower())
             print("Skor Akhir:", score)
             input("Tekan Enter untuk kembali ke menu utama")
             clear_screen()
