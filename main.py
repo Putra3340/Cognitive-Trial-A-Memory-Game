@@ -5,34 +5,57 @@ import time
 # Global Variable
 score = 0
 
+mapping = {
+    "↑": "W",
+    "↓": "S",
+    "←": "A",
+    "→": "D"
+}
+
+# 1 = Easy
+# 2 = Normal
+# 3 = Hard
+# 4 = Impossible
+difficulty = "0"
+
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
 
-def get_choices(level):
-    if level == "1":  # Easy
+def get_choices():
+    if difficulty == "1":  # Easy
         return ["↑", "↓", "←", "→"]
-    elif level == "2":  # Normal
+    elif difficulty == "2":  # Normal
         return [str(i) for i in range(10)]
-    elif level == "3":  # Hard
+    elif difficulty == "3":  # Hard
         return [chr(i) for i in range(65, 91)]  # A–Z
-    elif level == "4":  # Very Hard
+    elif difficulty == "4":  # Very Hard
         return ["cat", "moon", "red", "blue", "star", "note", "time", "fire"]
     else:
         return None
 
+def arrowToWasd(text):
+    for arrow, key in mapping.items():
+        text = text.replace(arrow, key)
+    return text
 
 def validate(answer, user_answer):
     for i in range(len(answer)):
         if i >= len(user_answer):
             return False  # user kurang huruf
 
-        if answer[i] != user_answer[i]:
-            return False  # ada huruf beda
-
+        if(difficulty == "4"): # eksklusif very hard validasi sensitif
+            if answer[i] != user_answer[i]:
+                return False  # salah
+        elif(difficulty == "1"): # eksklusif panah validasi menggunakan WASD
+            if arrowToWasd(answer[i]).upper() != user_answer[i].upper():
+                return False # salah
+        else:
+            if answer[i].upper() != user_answer[i].upper():
+                return False  # salah
     return True
 
-
 def main():
+    clear_screen()
     print("=== Cognitive Trial: A Memory Game ===\n\n")
     print("Pilih tingkat kesulitan:")
     print("1. Easy (Arah panah)")
@@ -40,8 +63,10 @@ def main():
     print("3. Hard (Huruf)")
     print("4. Impossible (Kata)")
 
-    level = input("Masukkan pilihan (1-4): ").strip()
-    choices = get_choices(level)
+    global difficulty
+    global score
+    difficulty = input("Masukkan pilihan (1-4): ").strip()
+    choices = get_choices()
 
     if choices is None:
         print("Pilihan tidak valid!")
