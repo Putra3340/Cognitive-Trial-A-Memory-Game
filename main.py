@@ -21,6 +21,19 @@ difficulty = "0"
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
 
+def printRandomColor(text):
+    colors = [
+        "\033[91m",  # Red
+        "\033[92m",  # Green
+        "\033[93m",  # Yellow
+        "\033[94m",  # Blue
+        "\033[95m",  # Magenta
+        "\033[96m",  # Cyan
+    ]
+    color = random.choice(colors)
+    reset = "\033[0m"
+    print(f"{color}{text}{reset}")
+
 def get_choices():
     if difficulty == "1":  # Easy
         return ["↑", "↓", "←", "→"]
@@ -80,12 +93,18 @@ def main():
         # tampilkan sequence ke pemain
         for item in sequence:
             clear_screen()
+            print("==============================")
+            print("Skor anda :", score)
             print("Ingat urutan berikut:")
-            print(item)
+            printRandomColor("==============================")
+            printRandomColor(f"            {item}           ")
+            printRandomColor("==============================")
             time.sleep(1)
 
         # hapus layar
         clear_screen()
+        print("==============================")
+        print("Skor anda :", score)
         print("Masukkan ulang urutan tadi:")
         answer = input("> ").strip()
 
