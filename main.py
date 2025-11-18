@@ -2,8 +2,11 @@ import random
 import os
 import time
 import threading
+import base64
 
 # Global Variable
+KEY = 69  # boleh diganti angka 0–255
+
 score = 0
 
 mapping = {
@@ -40,6 +43,24 @@ game_mode = "0"
 
 game_timer = 60 # default 60 seconds
 
+def encrypt(text):
+    encrypted_bytes = bytes([b ^ KEY for b in text.encode()])
+    return base64.b64encode(encrypted_bytes).decode()
+
+def decrypt(encoded):
+    try:
+        encrypted_bytes = base64.b64decode(encoded.encode())
+        decrypted_bytes = bytes([b ^ KEY for b in encrypted_bytes])
+        return decrypted_bytes.decode()
+    except:
+        return None
+
+def showCredits():
+    print("Cognitive Trial: A Memory Game")
+    print("Developer: Rahmad Dwi Syaputra")
+    print("Co Developer: Marcellino Putra Kurniawan")
+    print("Thank you for playing!")
+
 # Save Data Logic
 def save_score():
     global classic_easy_highscore
@@ -55,9 +76,9 @@ def save_score():
     global extreme_hard_highscore
     global extreme_impossible_highscore
 
-    filename = f"scores.txt"
+    filename = f"scores.dat"
     with open(filename, "w") as file: # overwrite
-        file.write(f"{classic_easy_highscore}|{classic_normal_highscore}|{classic_hard_highscore}|{classic_impossible_highscore}|{advanced_easy_highscore}|{advanced_normal_highscore}|{advanced_hard_highscore}|{advanced_impossible_highscore}|{extreme_easy_highscore}|{extreme_normal_highscore}|{extreme_hard_highscore}|{extreme_impossible_highscore}")
+        file.write(encrypt(f"{classic_easy_highscore}|{classic_normal_highscore}|{classic_hard_highscore}|{classic_impossible_highscore}|{advanced_easy_highscore}|{advanced_normal_highscore}|{advanced_hard_highscore}|{advanced_impossible_highscore}|{extreme_easy_highscore}|{extreme_normal_highscore}|{extreme_hard_highscore}|{extreme_impossible_highscore}"))
 
 def load_scores():
     global classic_easy_highscore
@@ -73,11 +94,12 @@ def load_scores():
     global extreme_hard_highscore
     global extreme_impossible_highscore
 
-    filename = f"scores.txt"
+    filename = f"scores.dat"
     if not os.path.exists(filename):
         return  # file tidak ada, lewati
     with open(filename, "r") as file:
-        data = file.read().strip().split("|")
+        data = decrypt(file.read().strip())
+        data = data.split("|")
         if len(data) == 12:
             classic_easy_highscore = int(data[0])
             classic_normal_highscore = int(data[1])
