@@ -2,7 +2,6 @@ import random
 import os
 import time
 import threading
-import sys
 
 # Global Variable
 score = 0
@@ -13,6 +12,16 @@ mapping = {
     "←": "a",
     "→": "d"
 }
+
+# HighScore Data
+classic_easy_highscore = 0
+classic_normal_highscore = 0
+classic_hard_highscore = 0
+classic_impossible_highscore = 0
+advanced_easy_highscore = 0
+advanced_normal_highscore = 0
+advanced_hard_highscore = 0
+advanced_impossible_highscore = 0
 
 # 1 = Easy
 # 2 = Normal
@@ -25,6 +34,46 @@ difficulty = "0"
 game_mode = "0"
 
 game_timer = 60 # default 60 seconds
+
+# Save Data Logic
+def save_score():
+    global classic_easy_highscore
+    global classic_normal_highscore
+    global classic_hard_highscore
+    global classic_impossible_highscore
+    global advanced_easy_highscore
+    global advanced_normal_highscore
+    global advanced_hard_highscore
+    global advanced_impossible_highscore
+
+    filename = f"scores.txt"
+    with open(filename, "w") as file: # overwrite
+        file.write(f"{classic_easy_highscore}|{classic_normal_highscore}|{classic_hard_highscore}|{classic_impossible_highscore}|{advanced_easy_highscore}|{advanced_normal_highscore}|{advanced_hard_highscore}|{advanced_impossible_highscore}")
+
+def load_scores():
+    global classic_easy_highscore
+    global classic_normal_highscore
+    global classic_hard_highscore
+    global classic_impossible_highscore
+    global advanced_easy_highscore
+    global advanced_normal_highscore
+    global advanced_hard_highscore
+    global advanced_impossible_highscore
+
+    filename = f"scores.txt"
+    if not os.path.exists(filename):
+        return  # file tidak ada, lewati
+    with open(filename, "r") as file:
+        data = file.read().strip().split("|")
+        if len(data) == 8:
+            classic_easy_highscore = int(data[0])
+            classic_normal_highscore = int(data[1])
+            classic_hard_highscore = int(data[2])
+            classic_impossible_highscore = int(data[3])
+            advanced_easy_highscore = int(data[4])
+            advanced_normal_highscore = int(data[5])
+            advanced_hard_highscore = int(data[6])
+            advanced_impossible_highscore = int(data[7])
 
 # Timer Logic
 def timed_input(prompt, timeout):
@@ -66,7 +115,23 @@ def get_choices():
     elif difficulty == "3":  # Hard
         return [chr(i) for i in range(65, 91)]  # A–Z
     elif difficulty == "4":  # Impossible
-        return ["cat", "moon", "red", "blue", "star", "note", "time", "fire"]
+        return [
+    # 50 kata umum Indonesia
+    "air ","tanah ","api ","angin ","batu ","pohon ","daun ","langit ","awan ","hujan ",
+    "petir ","matahari ","bulan ","bintang ","rumah ","jalan ","kursi ","meja ","pintu ","jendela ",
+    "buku ","kertas ","pena ","air ","makanan ","minuman ","orang ","teman ","guru ","murid ",
+    "waktu ","hari ","malam ","siang ","pagi ","sore ","mobil ","motor ","kereta ","jalan ",
+    "hewan ","ikan ","burung ","kucing ","anjing ","tas ","dompet ","kamar ","taman ","pasar ",
+
+    # 30 benda/tempat Jawa Timur
+    "Surabaya ","Malang ","Batu ","Probolinggo ","Lumajang ","Jember ","Bondowoso ","Situbondo ","Banyuwangi ","Madiun ",
+    "Kediri ","Blitar ","Tulungagung ","Nganjuk ","Mojokerto ","Jombang ","Sidoarjo ","Gresik ","Lamongan ","Bojonegoro ",
+    "Madura ","Bangil ","Pasuruan ","Trenggalek ","Magetan ","Ngawi ","Pacitan ","Bromo ","Ijen ","Baluran ",
+
+    # 20 kata umum Bahasa Inggris
+    "apple ","water ","house ","car ","street ","friend ","school ","paper ","book ","music ",
+    "light ","dark ","fast ","slow ","small ","big ","happy ","sad ","hot ","cold "
+]
     else:
         return None
 
@@ -97,6 +162,17 @@ def main():
     global difficulty
     global score
     global game_mode
+
+    global classic_easy_highscore
+    global classic_normal_highscore
+    global classic_hard_highscore
+    global classic_impossible_highscore
+    global advanced_easy_highscore
+    global advanced_normal_highscore
+    global advanced_hard_highscore
+    global advanced_impossible_highscore
+
+    load_scores()
     clear_screen()
     print("=== Cognitive Trial: A Memory Game ===\n\n")
     print("Pilih Mode Game:")
@@ -109,11 +185,19 @@ def main():
         print("=== Cognitive Trial: A Memory Game ===\n\n")
         print("Mode Game:", "Classic" if game_mode == "1" else "Advanced")
         print("Pilih tingkat kesulitan:")
-        print("1. Easy (Arah panah)")
-        print("2. Normal (Angka)")
-        print("3. Hard (Huruf)")
-        print("4. Impossible (Kata)")
-        print("5. Kembali ke menu utama")
+        print(
+            f"1. Easy (Arah panah)\t"
+            f"{classic_easy_highscore if game_mode == '1' else advanced_easy_highscore} (Highscore)")
+        print(
+            f"2. Normal (Angka)\t"
+            f"{classic_normal_highscore if game_mode == '1' else advanced_normal_highscore} (Highscore)")
+        print(
+            f"3. Hard (Huruf)\t\t"
+            f"{classic_hard_highscore if game_mode == '1' else advanced_hard_highscore} (Highscore)")
+        print(
+            f"4. Impossible (Kata)\t"
+            f"{classic_impossible_highscore if game_mode == '1' else advanced_impossible_highscore} (Highscore)")
+        print(f"5. Kembali ke menu utama")
         
         difficulty = input("Masukkan pilihan (1-5): ").strip()
         choices = get_choices()
@@ -166,8 +250,40 @@ def main():
                 break
 
             # validasi jawaban
-            if (validate("".join(sequence),answer)):
+            if (validate("".join(sequence).strip(),answer.strip())):
+
+                # score modifier
                 score += 1
+                if(game_mode == "2"): # advanced mode tambahan waktu
+                    score += 5
+                if(difficulty == "2"): # normal
+                    score += 2
+                elif(difficulty == "3"): # hard
+                    score += 4
+                elif(difficulty == "4"): # impossible
+                    score += 10
+                
+                # simpan skor tertinggi
+                if(game_mode == "1"): # classic
+                    if(difficulty == "1" and score > classic_easy_highscore):
+                        classic_easy_highscore = score
+                    elif(difficulty == "2" and score > classic_normal_highscore):
+                        classic_normal_highscore = score
+                    elif(difficulty == "3" and score > classic_hard_highscore):
+                        classic_hard_highscore = score
+                    elif(difficulty == "4" and score > classic_impossible_highscore):
+                        classic_impossible_highscore = score
+                elif(game_mode == "2"): # advanced
+                    if(difficulty == "1" and score > advanced_easy_highscore):
+                        advanced_easy_highscore = score
+                    elif(difficulty == "2" and score > advanced_normal_highscore):
+                        advanced_normal_highscore = score
+                    elif(difficulty == "3" and score > advanced_hard_highscore):
+                        advanced_hard_highscore = score
+                    elif(difficulty == "4" and score > advanced_impossible_highscore):
+                        advanced_impossible_highscore = score
+                save_score()
+
                 print("Benar! Lanjut ke ronde berikutnya...")
                 time.sleep(1)
             else:
@@ -175,7 +291,11 @@ def main():
                 print("Jawaban Anda: ", answer)
                 if(difficulty == "1"):
                     print("Urutan yang benar (WASD): ", arrowToWasd("".join(sequence)))
-                print("Urutan yang benar: ", ("".join(sequence)).lower())
+                
+                if(difficulty == "4"):
+                    print("Urutan yang benar: ", ("".join(sequence)))
+                else:
+                    print("Urutan yang benar: ", ("".join(sequence)).lower())
                 print("Skor Akhir:", score)
                 input("Tekan Enter untuk kembali ke menu utama")
                 clear_screen()
