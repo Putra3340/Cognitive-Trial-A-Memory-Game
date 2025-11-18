@@ -1,6 +1,8 @@
 import random
 import os
 import time
+import threading
+import sys
 
 # Global Variable
 score = 0
@@ -17,6 +19,28 @@ mapping = {
 # 3 = Hard
 # 4 = Impossible
 difficulty = "0"
+
+# 1 = Classic
+# 2 = Advanced
+game_mode = "0"
+
+game_timer = 60 # default 60 seconds
+
+# Timer Logic
+def timed_input(prompt, timeout):
+    user_input = [None]
+
+    def get_input():
+        user_input[0] = input(f"⌛{timeout}s {prompt}")
+
+    thread = threading.Thread(target=get_input)
+    thread.start()
+    thread.join(timeout)
+
+    if thread.is_alive():
+        return None  # waktu habis
+    else:
+        return user_input[0]
 
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -52,6 +76,9 @@ def arrowToWasd(text):
     return text
 
 def validate(answer, user_answer):
+    #validasi jumlah huruf
+    if(len(answer) != len(user_answer)):
+        return False
     for i in range(len(answer)):
         if i >= len(user_answer):
             return False  # user kurang huruf
@@ -67,62 +94,92 @@ def validate(answer, user_answer):
     return True
 
 def main():
-    clear_screen()
-    print("=== Cognitive Trial: A Memory Game ===\n\n")
-    print("Pilih tingkat kesulitan:")
-    print("1. Easy (Arah panah)")
-    print("2. Normal (Angka)")
-    print("3. Hard (Huruf)")
-    print("4. Impossible (Kata)")
-
     global difficulty
     global score
-    difficulty = input("Masukkan pilihan (1-4): ").strip()
-    choices = get_choices()
-
-    if choices is None:
-        print("Pilihan tidak valid!")
-        return
+    global game_mode
+    clear_screen()
+    print("=== Cognitive Trial: A Memory Game ===\n\n")
+    print("Pilih Mode Game:")
+    print("1. Classic")
+    print("2. Advanced")
+    game_mode = input("Masukkan pilihan (1-2): ").strip()
     
-    sequence = []
-
     while True:
-        # menambah satu item random ke sequence
-        sequence.append(random.choice(choices))
+        clear_screen()
+        print("=== Cognitive Trial: A Memory Game ===\n\n")
+        print("Mode Game:", "Classic" if game_mode == "1" else "Advanced")
+        print("Pilih tingkat kesulitan:")
+        print("1. Easy (Arah panah)")
+        print("2. Normal (Angka)")
+        print("3. Hard (Huruf)")
+        print("4. Impossible (Kata)")
+        print("5. Kembali ke menu utama")
+        
+        difficulty = input("Masukkan pilihan (1-5): ").strip()
+        choices = get_choices()
 
-        # tampilkan sequence ke pemain
-        for item in sequence:
+        if choices is None:
+            print("Pilihan tidak valid!")
+            return
+        
+        sequence = []
+        score = 0
+
+        while True:
+            # menambah satu item random ke sequence
+            sequence.append(random.choice(choices))
+
+            # tampilkan sequence ke pemain
+            for item in sequence:
+                clear_screen()
+                print("==============================")
+                print("Skor anda :", score)
+                print("Ingat urutan berikut:")
+                printRandomColor("==============================")
+                printRandomColor(f"            {item}           ")
+                printRandomColor("==============================")
+                time.sleep(1)
+
+            # hapus layar
             clear_screen()
             print("==============================")
             print("Skor anda :", score)
-            print("Ingat urutan berikut:")
-            printRandomColor("==============================")
-            printRandomColor(f"            {item}           ")
-            printRandomColor("==============================")
-            time.sleep(1)
+            print("Masukkan ulang urutan tadi:")
+            if(game_mode == "1"):
+                # classic mode: waktu bertambah sesuai panjang sequence + 60 detik + 5 detik
+                answer = timed_input(">> ", game_timer + len(sequence) + 5)
+            elif(game_mode == "2"):
+                # advanced mode : waktu panjang sequence + 5 detik
+                answer = timed_input(">> ", len(sequence) + 5)
 
-        # hapus layar
-        clear_screen()
-        print("==============================")
-        print("Skor anda :", score)
-        print("Masukkan ulang urutan tadi:")
-        answer = input("> ").strip()
-
-        # cek jawaban
-        if (validate("".join(sequence),answer)):
-            score += 1
-            print("Benar! Lanjut ke ronde berikutnya...")
-            time.sleep(1)
-        else:
-            print("\nSalah! Permainan berakhir.")
-            print("Jawaban Anda: ", answer)
-            if(difficulty == "1"):
-                print("Urutan yang benar (WASD): ", arrowToWasd("".join(sequence)))
-            print("Urutan yang benar: ", ("".join(sequence)).lower())
-            print("Skor Akhir:", score)
-            input("Tekan Enter untuk kembali ke menu utama")
             clear_screen()
-            break
+
+            # jika waktu habis
+            if(answer is None):
+                print("\nWaktu habis! Permainan berakhir.")
+                if(difficulty == "1"):
+                    print("Urutan yang benar (WASD): ", arrowToWasd("".join(sequence)))
+                print("Urutan yang benar: ", ("".join(sequence)).lower())
+                print("Skor Akhir:", score)
+                input("Tekan Enter untuk kembali ke menu utama")
+                clear_screen()
+                break
+
+            # validasi jawaban
+            if (validate("".join(sequence),answer)):
+                score += 1
+                print("Benar! Lanjut ke ronde berikutnya...")
+                time.sleep(1)
+            else:
+                print("\nSalah! Permainan berakhir.")
+                print("Jawaban Anda: ", answer)
+                if(difficulty == "1"):
+                    print("Urutan yang benar (WASD): ", arrowToWasd("".join(sequence)))
+                print("Urutan yang benar: ", ("".join(sequence)).lower())
+                print("Skor Akhir:", score)
+                input("Tekan Enter untuk kembali ke menu utama")
+                clear_screen()
+                break
 
 if __name__ == "__main__":
     while True:
