@@ -52,6 +52,13 @@ alreadynotified = False
 
 game_timer = 60 # default 60 seconds
 
+# Lebar keseluruhan box (ubah bebas)
+BOX_WIDTH = 65  # responsif
+INNER_WIDTH = BOX_WIDTH - 4  # ruang dalam antara │    │
+
+def pad(text):
+    return f"{text:<{INNER_WIDTH}}"
+
 def encrypt(text):
     encrypted_bytes = bytes([b ^ KEY for b in text.encode()])
     return base64.b64encode(encrypted_bytes).decode()
@@ -65,11 +72,15 @@ def decrypt(encoded):
         return None
 
 def showCredits():
-    print("Cognitive Trial: A Memory Game")
-    print("Developer 1 : Rahmad Dwi Syaputra")
-    print("Developer 2 : Marcellino Putra Kurniawan")
-    print("SMKN 1 Dlanggu - XII RPL 3")
-    print("Thank you for playing!")
+    print("╔" + "═" * (BOX_WIDTH - 2) + "╗")
+    print("║" + pad("🎮 Cognitive Trial: A Memory Game") + " ║")
+    print("╠" + "═" * (BOX_WIDTH - 2) + "╣")
+    print("║" + pad("Developer 1 : Rahmad Dwi Syaputra") + "  ║")
+    print("║" + pad("Developer 2 : Marcellino Putra Kurniawan") + "  ║")
+    print("║" + pad("SMKN 1 Dlanggu - XII RPL 3") + "  ║")
+    print("╠" + "═" * (BOX_WIDTH - 2) + "╣")
+    print("║" + pad("Thank you for playing!") + "  ║")
+    print("╚" + "═" * (BOX_WIDTH - 2) + "╝")
 
 # Save Data Logic
 def save_score():
@@ -136,7 +147,7 @@ def timed_input(prompt, timeout):
     user_input = [None]
 
     def get_input():
-        user_input[0] = input(f"⌛{timeout}s {prompt}")
+        user_input[0] = input(f"⌛ {timeout}s {prompt}")
 
     thread = threading.Thread(target=get_input)
     thread.start()
@@ -197,22 +208,19 @@ def arrowToWasd(text):
     return text
 
 def validate(answer, user_answer):
-    #validasi jumlah huruf
-    if(len(answer) != len(user_answer)):
+    # panjang harus sama
+    if len(answer) != len(user_answer):
         return False
-    for i in range(len(answer)):
-        if i >= len(user_answer):
-            return False  # user kurang huruf
-        if(difficulty == "4"): # eksklusif very hard validasi sensitif
-            if answer[i] != user_answer[i]:
-                return False  # salah
-        elif(difficulty == "1"): # eksklusif panah validasi menggunakan WASD
-            if arrowToWasd(answer[i]).lower() != user_answer[i].lower():
-                return False # salah
-        else:
-            if answer[i].lower() != user_answer[i].lower():
-                return False  # salah
-    return True
+    # mode impossible → case-sensitive exact match
+    if difficulty == "4":
+        return answer == user_answer
+    # mode arrow → convert ke WASD, abaikan kapital
+    if difficulty == "1":
+        converted = ''.join(arrowToWasd(ch).lower() for ch in answer)
+        return converted == user_answer.lower()
+    # mode lain → abaikan kapital
+    return answer.lower() == user_answer.lower()
+
 
 def main():
     global difficulty
@@ -235,25 +243,50 @@ def main():
 
     load_scores()
     clear_screen()
-    print("=== Cognitive Trial: A Memory Game ===\n\n")
-    print("Pilih Mode Game:")
-    print("1. Classic")
-    print("2. Advanced")
-    print("3. Extreme")
-    print("4. Keluar")
-    game_mode = input("Masukkan pilihan (1-4): ").strip()
+    print("╔" + "═" * (BOX_WIDTH - 2) + "╗")
+    print("║" + "🧠  COGNITIVE TRIAL: MEMORY GAME  🧠".center(INNER_WIDTH) + "║")
+    print("╠" + "═" * (BOX_WIDTH - 2) + "╣")
+    print("║" + pad("Created by Puput") + "  ║")
+    print("╠" + "═" * (BOX_WIDTH - 2) + "╣")
+    print("║" + pad("Pilih Mode Game:") + "  ║")
+    print("║" + pad("") + "  ║")
+    print("║" + pad("1. Classic") + "  ║")
+    print("║" + pad("2. Advanced") + "  ║")
+    print("║" + pad("3. Extreme") + "  ║")
+    print("║" + pad("4. Keluar") + "  ║")
+    print("║" + pad("") + "  ║")
+    print("╚" + "═" * (BOX_WIDTH - 2) + "╝")
+
+    print("╔" + "═" * (BOX_WIDTH - 2) + "╗")
+    print("║" + pad("Masukkan pilihan (1-4):") + "  ║")
+    print("╚" + "═" * (BOX_WIDTH - 2) + "╝")
+
+    game_mode = input(">>> ").strip()
+
+
     
     # Check unlocked modes
     if(game_mode == "2" and int(unlocked_modes) < 1):
         clear_screen()
-        print("🔒 Mode Advanced terkunci! Selesaikan Classic Mode terlebih dahulu untuk membukanya.")
+        print("╔══════════════════════════════════════════════╗")
+        print("║                MODE TERKUNCI 🔒              ║")
+        print("╠══════════════════════════════════════════════╣")
+        print("║  Mode Advanced masih terkunci!               ║")
+        print("║  Selesaikan Classic Mode terlebih dahulu.    ║")
+        print("╚══════════════════════════════════════════════╝")
         input("Tekan Enter untuk kembali ke menu utama...")
         clear_screen()
         return
     elif(game_mode == "3" and int(unlocked_modes) < 2):
         clear_screen()
-        print("🔒 Mode Extreme terkunci! Selesaikan Advanced Mode terlebih dahulu untuk membukanya.")
+        print("╔══════════════════════════════════════════════╗")
+        print("║                MODE TERKUNCI 🔒              ║")
+        print("╠══════════════════════════════════════════════╣")
+        print("║  Mode Extreme masih terkunci!                ║")
+        print("║  Selesaikan Advanced Mode terlebih dahulu.   ║")
+        print("╚══════════════════════════════════════════════╝")
         input("Tekan Enter untuk kembali ke menu utama...")
+
         clear_screen()
         return
     elif(game_mode == "4"):
@@ -263,7 +296,13 @@ def main():
 
     while True:
         clear_screen()
-        print("=== Cognitive Trial: A Memory Game ===\n\n")
+
+        
+
+        print("╔" + "═" * (BOX_WIDTH - 2) + "╗")
+        print("║" + "🧠  COGNITIVE TRIAL: MEMORY GAME  🧠".center(INNER_WIDTH) + "║")
+        print("╚" + "═" * (BOX_WIDTH - 2) + "╝")
+
         game_mode_text = ""
         if(game_mode == "1"):
             game_mode_text = "Classic"
@@ -274,15 +313,19 @@ def main():
         else:
             print("Terima kasih telah bermain!")
             break
-        print("Mode Game:", game_mode_text)
-        print("Pilih tingkat kesulitan:")
 
-        easytext = "1. Easy (Arah panah)\t"
-        normaltext = "2. Normal (Angka)\t"
-        hardtext = "3. Hard (Huruf)\t\t"
-        impossibletext = "4. Impossible (Kata)\t"
+        print("╔" + "═" * (BOX_WIDTH - 2) + "╗")
+        print("║" + pad(f"Mode Game: {game_mode_text}") + "  ║")
+        print("║" + pad("Pilih tingkat kesulitan:") + "  ║")
+        print("╠" + "═" * (BOX_WIDTH - 2) + "╣")
 
-        # tampilkan skor tertinggi sesuai mode
+        # base text
+        easytext = "1. Easy (Arah panah) - "
+        normaltext = "2. Normal (Angka) - "
+        hardtext = "3. Hard (Huruf) - "
+        impossibletext = "4. Impossible (Kata) - "
+
+        # highscore append
         if(game_mode == "1"):
             easytext += f"{classic_easy_highscore} (Highscore)"
             normaltext += f"{classic_normal_highscore} (Highscore)"
@@ -299,13 +342,16 @@ def main():
             hardtext += f"{extreme_hard_highscore} (Highscore)"
             impossibletext += f"{extreme_impossible_highscore} (Highscore)"
 
-        print(easytext)
-        print(normaltext)
-        print(hardtext)
-        print(impossibletext)
-        print(f"5. Kembali ke menu utama")
-        
+        print("║" + pad(easytext) + "  ║")
+        print("║" + pad(normaltext) + "  ║")
+        print("║" + pad(hardtext) + "  ║")
+        print("║" + pad(impossibletext) + "  ║")
+        print("║" + pad("5. Kembali ke menu utama") + "  ║")
+        print("╚" + "═" * (BOX_WIDTH - 2) + "╝")
+
         difficulty = input("Masukkan pilihan (1-5): ").strip()
+
+
         if(difficulty == "5"):
             clear_screen()
             break
@@ -330,19 +376,28 @@ def main():
             # tampilkan sequence ke pemain
             for item in sequence:
                 clear_screen()
-                print("==============================")
-                print("Skor anda :", score)
-                print("Ingat urutan berikut:")
-                printRandomColor("==============================")
-                printRandomColor(f"            {item}           ")
-                printRandomColor("==============================")
+                print("╔" + "═" * (BOX_WIDTH - 2) + "╗")
+                print("║" + pad(f"Skor anda : {score}") + "  ║")
+                print("║" + pad("Ingat urutan berikut:") + "  ║")
+                print("╠" + "═" * (BOX_WIDTH - 2) + "╣")
+                q_top = "║" + "═" * (BOX_WIDTH - 2) + "║"
+
+                # item (diposisikan center secara manual agar tetap responsif)
+                item_line = f"{item}".center(INNER_WIDTH)
+                q_middle = "║" + item_line + "  ║"
+                q_down = "╚" + "═" * (BOX_WIDTH - 2) + "╝"
+
+                output = q_top + "\n" + q_middle + "\n" + q_down
+                printRandomColor(output)
                 time.sleep(1)
 
             # hapus layar
             clear_screen()
-            print("==============================")
-            print("Skor anda :", score)
-            print("Masukkan ulang urutan tadi:")
+            print("╔" + "═" * (BOX_WIDTH - 2) + "╗")
+            print("║" + pad(f"Skor anda : {score}") + "  ║")
+            print("╠" + "═" * (BOX_WIDTH - 2) + "╣")
+            print("║" + pad("Masukkan ulang urutan tadi:") + "  ║")
+            print("╚" + "=" * (BOX_WIDTH - 2) + "╝")
             if(game_mode == "1"):
                 # classic mode: waktu bertambah sesuai panjang sequence + 60 detik + 10 detik
                 answer = timed_input(">> ", game_timer + len(sequence) + 10)
@@ -357,12 +412,19 @@ def main():
 
             # jika waktu habis
             if(answer is None):
-                print("\nWaktu habis! Permainan berakhir.")
-                if(difficulty == "1"):
-                    print("Urutan yang benar (WASD): ", arrowToWasd("".join(sequence)))
-                print("Urutan yang benar: ", ("".join(sequence)).lower())
-                print("Skor Akhir:", score)
-                input("Tekan Enter untuk kembali ke menu utama")
+                print()
+                print("╔" + "═" * (BOX_WIDTH - 2) + "╗")
+                print("║" + pad("Waktu habis! Permainan berakhir.") + "  ║")
+                print("╚" + "═" * (BOX_WIDTH - 2) + "╝")
+                if difficulty == "1":
+                    correct_wasd = arrowToWasd("".join(sequence))
+                    print(f"Urutan yang benar (WASD): {correct_wasd}")
+                correct_seq = ("".join(sequence)).lower()
+                print(f"Urutan yang benar: {correct_seq}")
+                print(f"Skor Akhir: {score}")
+                print("═" * (BOX_WIDTH))
+                print("Tekan Enter 2x untuk kembali ke menu") # seharusnya 1x, tapi karena timed_input pakai threading, perlu 2x
+                input()
                 clear_screen()
                 break
 
@@ -418,16 +480,20 @@ def main():
                     clear_screen()
                     unlocked_modes = "1"
                     save_score()
-                    print("🔓 Selamat! Anda telah membuka mode Advanced! 🔓")
+                    print("╔" + "═" * (BOX_WIDTH - 2) + "╗")
+                    print("║" + pad("🔓 Selamat! Anda telah membuka mode Advanced! 🔓") + "║")
+                    print("╚" + "═" * (BOX_WIDTH - 2) + "╝")
                     input("Tekan Enter untuk melanjutkan permainan...")
                     alreadynotified = True
                     clear_screen()
                 # Unlock next gamemode extreme
-                if(score >= 100 and game_mode == "2" and difficulty == "4" and not alreadynotified and int(unlocked_modes) < 2):
+                if(score >= 90 and game_mode == "2" and difficulty == "4" and not alreadynotified and int(unlocked_modes) < 2):
                     clear_screen()
                     unlocked_modes = "2"
                     save_score()
-                    print("🔓 Selamat! Anda telah membuka mode Extreme! 🔓")
+                    print("╔" + "═" * (BOX_WIDTH - 2) + "╗")
+                    print("║" + pad("🔓 Selamat! Anda telah membuka mode Extreme! 🔓") + "║")
+                    print("╚" + "═" * (BOX_WIDTH - 2) + "╝")
                     input("Tekan Enter untuk melanjutkan permainan...")
                     alreadynotified = True
                     clear_screen()
@@ -437,27 +503,39 @@ def main():
                     unlocked_modes = "3"
                     alreadynotified = True
                     save_score()
-                    print("🎉 Selamat! Anda menemukan Easter Egg! 🎉")
-                    print("Skor Anda telah mencapai 125 di mode Extreme - Impossible!")
+                    print("╔" + "═" * (BOX_WIDTH - 2) + "╗")
+                    print("║" + pad("🎉 Selamat! Anda menemukan Easter Egg! 🎉") + "║")
+                    print("╠" + "═" * (BOX_WIDTH - 2) + "╣")
+                    print("║" + pad("Skor Anda telah mencapai 125 di mode Extreme - Impossible!") + "  ║")
+                    print("║" + pad("Anda adalah Master of Memory sejati!") + "  ║")
+                    print("╚" + "═" * (BOX_WIDTH - 2) + "╝")
                     showCredits()
                     input("Tekan Enter untuk melanjutkan permainan...")
                     clear_screen()
                 
-                print("Benar! Lanjut ke ronde berikutnya...")
-                time.sleep(1)
+                print("╔" + "═" * (BOX_WIDTH - 2) + "╗")
+                print("║" + pad("Benar! Lanjut ke ronde berikutnya...") + "  ║")
+                print("╚" + "═" * (BOX_WIDTH - 2) + "╝")
+                time.sleep(1.2)
             else:
-                print("\nSalah! Permainan berakhir.")
                 save_score()
-                print("Jawaban Anda: ", answer)
-                if(difficulty == "1"):
-                    print("Urutan yang benar (WASD): ", arrowToWasd("".join(sequence)))
-                
-                if(difficulty == "4"):
-                    print("Urutan yang benar: ", ("".join(sequence)))
+                print()  
+                print("╔" + "═" * (BOX_WIDTH - 2) + "╗")
+                print("║" + pad("❌ Salah! Permainan berakhir.") + " ║")
+                print("╚" + "═" * (BOX_WIDTH - 2) + "╝")
+                print(f"Jawaban Anda : {answer}")
+                if difficulty == "1":
+                    correct = arrowToWasd("".join(sequence))
+                    print(f"Urutan yang benar (WASD): {correct}")
                 else:
-                    print("Urutan yang benar: ", ("".join(sequence)).lower())
-                print("Skor Akhir:", score)
-                input("Tekan Enter untuk kembali ke menu utama")
+                    correct = "".join(sequence)
+                    if difficulty != "4":
+                        correct = correct.lower()
+                    print(f"Urutan yang benar: {correct}")
+                print(f"Skor Akhir: {score}")
+                print("═" * (BOX_WIDTH))
+                input("Tekan Enter untuk kembali ke menu utama...")
+
                 clear_screen()
                 break
 
