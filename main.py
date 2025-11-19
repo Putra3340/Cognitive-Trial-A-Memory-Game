@@ -41,6 +41,15 @@ difficulty = "0"
 # 3 = Extreme - Low Time, Very High Score and Random Combination each round
 game_mode = "0"
 
+# 0 = Only Classic Mode
+# 1 = Classic + Advanced Mode
+# 2 = Classic + Advanced + Extreme Mode
+# 3 = All Modes Beated
+unlocked_modes = "0"
+
+# For pop-up notification easter egg / achievement
+alreadynotified = False
+
 game_timer = 60 # default 60 seconds
 
 def encrypt(text):
@@ -57,8 +66,9 @@ def decrypt(encoded):
 
 def showCredits():
     print("Cognitive Trial: A Memory Game")
-    print("Developer: Rahmad Dwi Syaputra")
-    print("Co Developer: Marcellino Putra Kurniawan")
+    print("Developer 1 : Rahmad Dwi Syaputra")
+    print("Developer 2 : Marcellino Putra Kurniawan")
+    print("SMKN 1 Dlanggu - XII RPL 3")
     print("Thank you for playing!")
 
 # Save Data Logic
@@ -75,10 +85,11 @@ def save_score():
     global extreme_normal_highscore
     global extreme_hard_highscore
     global extreme_impossible_highscore
+    global unlocked_modes
 
     filename = f"scores.dat"
     with open(filename, "w") as file: # overwrite
-        file.write(encrypt(f"{classic_easy_highscore}|{classic_normal_highscore}|{classic_hard_highscore}|{classic_impossible_highscore}|{advanced_easy_highscore}|{advanced_normal_highscore}|{advanced_hard_highscore}|{advanced_impossible_highscore}|{extreme_easy_highscore}|{extreme_normal_highscore}|{extreme_hard_highscore}|{extreme_impossible_highscore}"))
+        file.write(encrypt(f"{classic_easy_highscore}|{classic_normal_highscore}|{classic_hard_highscore}|{classic_impossible_highscore}|{advanced_easy_highscore}|{advanced_normal_highscore}|{advanced_hard_highscore}|{advanced_impossible_highscore}|{extreme_easy_highscore}|{extreme_normal_highscore}|{extreme_hard_highscore}|{extreme_impossible_highscore}|{unlocked_modes}"))
 
 def load_scores():
     global classic_easy_highscore
@@ -93,14 +104,19 @@ def load_scores():
     global extreme_normal_highscore
     global extreme_hard_highscore
     global extreme_impossible_highscore
+    global unlocked_modes
 
     filename = f"scores.dat"
     if not os.path.exists(filename):
+        # buat file baru dengan skor 0
+        filename = f"scores.dat"
+        with open(filename, "w") as file: # overwrite
+            file.write(encrypt(f"{classic_easy_highscore}|{classic_normal_highscore}|{classic_hard_highscore}|{classic_impossible_highscore}|{advanced_easy_highscore}|{advanced_normal_highscore}|{advanced_hard_highscore}|{advanced_impossible_highscore}|{extreme_easy_highscore}|{extreme_normal_highscore}|{extreme_hard_highscore}|{extreme_impossible_highscore}|{unlocked_modes}"))
         return  # file tidak ada, lewati
     with open(filename, "r") as file:
         data = decrypt(file.read().strip())
         data = data.split("|")
-        if len(data) == 12:
+        if len(data) == 13:
             classic_easy_highscore = int(data[0])
             classic_normal_highscore = int(data[1])
             classic_hard_highscore = int(data[2])
@@ -113,6 +129,7 @@ def load_scores():
             extreme_normal_highscore = int(data[9])
             extreme_hard_highscore = int(data[10])
             extreme_impossible_highscore = int(data[11])
+            unlocked_modes = int(data[12])
 
 # Timer Logic
 def timed_input(prompt, timeout):
@@ -201,6 +218,7 @@ def main():
     global difficulty
     global score
     global game_mode
+    global unlocked_modes
 
     global classic_easy_highscore
     global classic_normal_highscore
@@ -225,6 +243,24 @@ def main():
     print("4. Keluar")
     game_mode = input("Masukkan pilihan (1-4): ").strip()
     
+    # Check unlocked modes
+    if(game_mode == "2" and int(unlocked_modes) < 1):
+        clear_screen()
+        print("🔒 Mode Advanced terkunci! Selesaikan Classic Mode terlebih dahulu untuk membukanya.")
+        input("Tekan Enter untuk kembali ke menu utama...")
+        clear_screen()
+        return
+    elif(game_mode == "3" and int(unlocked_modes) < 2):
+        clear_screen()
+        print("🔒 Mode Extreme terkunci! Selesaikan Advanced Mode terlebih dahulu untuk membukanya.")
+        input("Tekan Enter untuk kembali ke menu utama...")
+        clear_screen()
+        return
+    elif(game_mode == "4"):
+        clear_screen()
+        print("Terima kasih telah bermain!")
+        exit()
+
     while True:
         clear_screen()
         print("=== Cognitive Trial: A Memory Game ===\n\n")
@@ -281,13 +317,14 @@ def main():
         
         sequence = []
         score = 0
+        alreadynotified = False
 
         while True:
+            # generate sequence baru
             if(game_mode == "3"): # extreme mode: random kombinasi setiap ronde
                 sequence_length = len(sequence) + 1
                 sequence = [random.choice(choices) for _ in range(sequence_length)]
             else: # classic & advanced mode : menambah satu item random ke sequence
-                
                 sequence.append(random.choice(choices))
 
             # tampilkan sequence ke pemain
@@ -375,6 +412,35 @@ def main():
                         extreme_impossible_highscore = score
                 save_score()
 
+                
+                # Unlock next gamemode advanced
+                if(score >= 70 and game_mode == "1" and difficulty == "4" and not alreadynotified):
+                    clear_screen()
+                    unlocked_modes = "1"
+                    save_score()
+                    print("🔓 Selamat! Anda telah membuka mode Advanced! 🔓")
+                    input("Tekan Enter untuk melanjutkan permainan...")
+                    alreadynotified = True
+                    clear_screen()
+                # Unlock next gamemode extreme
+                if(score >= 100 and game_mode == "2" and difficulty == "4" and not alreadynotified):
+                    clear_screen()
+                    unlocked_modes = "2"
+                    print("🔓 Selamat! Anda telah membuka mode Extreme! 🔓")
+                    input("Tekan Enter untuk melanjutkan permainan...")
+                    alreadynotified = True
+                    clear_screen()
+                # EASTER EGG : jika skor 150 di mode extreme impossible
+                if(score >= 150 and game_mode == "3" and difficulty == "4" and not alreadynotified):
+                    clear_screen()
+                    unlocked_modes = "3"
+                    alreadynotified = True
+                    print("🎉 Selamat! Anda menemukan Easter Egg! 🎉")
+                    print("Skor Anda telah mencapai 100 di mode Extreme - Impossible!")
+                    showCredits()
+                    input("Tekan Enter untuk melanjutkan permainan...")
+                    clear_screen()
+                
                 print("Benar! Lanjut ke ronde berikutnya...")
                 time.sleep(1)
             else:
