@@ -300,8 +300,9 @@ def main():
         clear_screen()
         print("Terima kasih telah bermain!")
         exit()
-    else:
+    elif (game_mode not in ["1","2","3"]):
         clear_screen()
+        print("Pilihan tidak valid!")
         return
     while True:
         clear_screen()
