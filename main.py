@@ -414,7 +414,7 @@ def main():
 
                 
                 # Unlock next gamemode advanced
-                if(score >= 70 and game_mode == "1" and difficulty == "4" and not alreadynotified):
+                if(score >= 70 and game_mode == "1" and difficulty == "4" and not alreadynotified and int(unlocked_modes) < 1):
                     clear_screen()
                     unlocked_modes = "1"
                     save_score()
@@ -423,20 +423,22 @@ def main():
                     alreadynotified = True
                     clear_screen()
                 # Unlock next gamemode extreme
-                if(score >= 100 and game_mode == "2" and difficulty == "4" and not alreadynotified):
+                if(score >= 100 and game_mode == "2" and difficulty == "4" and not alreadynotified and int(unlocked_modes) < 2):
                     clear_screen()
                     unlocked_modes = "2"
+                    save_score()
                     print("🔓 Selamat! Anda telah membuka mode Extreme! 🔓")
                     input("Tekan Enter untuk melanjutkan permainan...")
                     alreadynotified = True
                     clear_screen()
-                # EASTER EGG : jika skor 150 di mode extreme impossible
-                if(score >= 150 and game_mode == "3" and difficulty == "4" and not alreadynotified):
+                # EASTER EGG : jika skor 125 di mode extreme impossible
+                if(score >= 125 and game_mode == "3" and difficulty == "4" and not alreadynotified):
                     clear_screen()
                     unlocked_modes = "3"
                     alreadynotified = True
+                    save_score()
                     print("🎉 Selamat! Anda menemukan Easter Egg! 🎉")
-                    print("Skor Anda telah mencapai 100 di mode Extreme - Impossible!")
+                    print("Skor Anda telah mencapai 125 di mode Extreme - Impossible!")
                     showCredits()
                     input("Tekan Enter untuk melanjutkan permainan...")
                     clear_screen()
@@ -445,6 +447,7 @@ def main():
                 time.sleep(1)
             else:
                 print("\nSalah! Permainan berakhir.")
+                save_score()
                 print("Jawaban Anda: ", answer)
                 if(difficulty == "1"):
                     print("Urutan yang benar (WASD): ", arrowToWasd("".join(sequence)))
