@@ -73,7 +73,7 @@ def decrypt(encoded):
 
 def showCredits():
     print("╔" + "═" * (BOX_WIDTH - 2) + "╗")
-    print("║" + pad("🎮 Cognitive Trial: A Memory Game") + " ║")
+    print("║" + "🧠  COGNITIVE TRIAL: MEMORY GAME  🧠".center(INNER_WIDTH) + "║")
     print("╠" + "═" * (BOX_WIDTH - 2) + "╣")
     print("║" + pad("Developer 1 : Rahmad Dwi Syaputra") + "  ║")
     print("║" + pad("Developer 2 : Marcellino Putra Kurniawan") + "  ║")
