@@ -253,12 +253,13 @@ def main():
     print("║" + pad("1. Classic") + "  ║")
     print("║" + pad("2. Advanced") + "  ║")
     print("║" + pad("3. Extreme") + "  ║")
-    print("║" + pad("4. Keluar") + "  ║")
+    print("║" + pad("4. Credit") + "  ║")
+    print("║" + pad("5. Keluar") + "  ║")
     print("║" + pad("") + "  ║")
     print("╚" + "═" * (BOX_WIDTH - 2) + "╝")
 
     print("╔" + "═" * (BOX_WIDTH - 2) + "╗")
-    print("║" + pad("Masukkan pilihan (1-4):") + "  ║")
+    print("║" + pad("Masukkan pilihan (1-5):") + "  ║")
     print("╚" + "═" * (BOX_WIDTH - 2) + "╝")
 
     game_mode = input(">>> ").strip()
@@ -266,7 +267,9 @@ def main():
 
     
     # Check unlocked modes
-    if(game_mode == "2" and int(unlocked_modes) < 1):
+    if(game_mode == "1"):
+        clear_screen()
+    elif(game_mode == "2" and int(unlocked_modes) < 1):
         clear_screen()
         print("╔══════════════════════════════════════════════╗")
         print("║                MODE TERKUNCI 🔒              ║")
@@ -291,14 +294,17 @@ def main():
         return
     elif(game_mode == "4"):
         clear_screen()
+        showCredits()
+        input("Tekan Enter untuk kembali ke menu utama...")
+    elif(game_mode == "5"):
+        clear_screen()
         print("Terima kasih telah bermain!")
         exit()
-
+    else:
+        clear_screen()
+        return
     while True:
         clear_screen()
-
-        
-
         print("╔" + "═" * (BOX_WIDTH - 2) + "╗")
         print("║" + "🧠  COGNITIVE TRIAL: MEMORY GAME  🧠".center(INNER_WIDTH) + "║")
         print("╚" + "═" * (BOX_WIDTH - 2) + "╝")
