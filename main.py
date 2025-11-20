@@ -426,8 +426,13 @@ def main():
                 if difficulty == "1":
                     correct_wasd = arrowToWasd("".join(sequence))
                     print(f"Urutan yang benar (WASD): {correct_wasd}")
-                correct_seq = ("".join(sequence)).lower()
-                print(f"Urutan yang benar: {correct_seq}")
+                
+                if difficulty != "4":
+                    correct_seq = ("".join(sequence)).lower()
+                    print(f"Urutan yang benar: {correct_seq}")
+                else:
+                    correct_seq = "".join(sequence)
+                    print(f"Urutan yang benar: {correct_seq}")
                 print(f"Skor Akhir: {score}")
                 print("═" * (BOX_WIDTH))
                 print("Tekan Enter 2x untuk kembali ke menu") # seharusnya 1x, tapi karena timed_input pakai threading, perlu 2x
