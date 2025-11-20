@@ -71,6 +71,70 @@ def decrypt(encoded):
     except:
         return None
 
+def showHowtoPlay(diff):
+    if(diff == "1"):
+        clear_screen()
+        print("╔" + "═" * (BOX_WIDTH - 2) + "╗")
+        print("║" + "Cara Bermain".center(INNER_WIDTH) + "  ║")
+        print("║" + "Tingkat Kesulitan : Easy".center(INNER_WIDTH) + "  ║")
+        print("╠" + "═" * (BOX_WIDTH - 2) + "╣")
+        print("║" + pad("Nanti ada Kombinasi arah panah yang akan ditampilkan berurutan") + " ║")
+        print("║" + pad("yang akan memuat :") + "  ║")
+        print("║" + pad("↑ = W") + "  ║")
+        print("║" + pad("← = A") + "  ║")
+        print("║" + pad("→ = D") + "  ║")
+        print("║" + pad("↓ = S") + "  ║")
+        print("║" + pad("Setelah semua kombinasi muncul anda perlu mengetik ulang") + "  ║")
+        print("║" + pad("kombinasi yang ditampilkan.") + "  ║")
+        print("║" + pad("Untuk panah di interpretasikan seperti yang di atas.") + "  ║")
+        print("║" + pad("Contoh : '→' '↓' '←' '↓' adalah ('d' 's' 'a' 's') di keyboard.") + " ║")
+        print("║" + pad("Jangan lupa anda memiliki waktu terbatas untuk menjawab!") + "  ║")
+        print("╚" + "═" * (BOX_WIDTH - 2) + "╝")
+        input("Tekan Enter jika anda sudah siap!")
+        return
+    elif(diff=="2"):
+        clear_screen()
+        print("╔" + "═" * (BOX_WIDTH - 2) + "╗")
+        print("║" + "Cara Bermain".center(INNER_WIDTH) + "  ║")
+        print("║" + "Tingkat Kesulitan : Normal".center(INNER_WIDTH) + "  ║")
+        print("╠" + "═" * (BOX_WIDTH - 2) + "╣")
+        print("║" + pad("Nanti ada Kombinasi angka yang akan ditampilkan berurutan.") + "  ║")
+        print("║" + pad("Setelah semua kombinasi muncul anda perlu mengetik ulang") + "  ║")
+        print("║" + pad("kombinasi yang ditampilkan.") + "  ║")
+        print("║" + pad("Contoh : '1' '6' '7' '8' adalah (1678).") + "  ║")
+        print("║" + pad("Jangan lupa anda memiliki waktu terbatas untuk menjawab!") + "  ║")
+        print("╚" + "═" * (BOX_WIDTH - 2) + "╝")
+        input("Tekan Enter jika anda sudah siap!")
+    elif(diff=="3"):
+        clear_screen()
+        print("╔" + "═" * (BOX_WIDTH - 2) + "╗")
+        print("║" + "Cara Bermain".center(INNER_WIDTH) + "  ║")
+        print("║" + "Tingkat Kesulitan : Hard".center(INNER_WIDTH) + "  ║")
+        print("╠" + "═" * (BOX_WIDTH - 2) + "╣")
+        print("║" + pad("Nanti ada Kombinasi huruf yang akan ditampilkan berurutan.") + "  ║")
+        print("║" + pad("Setelah semua kombinasi muncul anda perlu mengetik ulang") + "  ║")
+        print("║" + pad("kombinasi yang ditampilkan.") + "  ║")
+        print("║" + pad("Contoh : 'A' 'Z' 'B' 'C' adalah (azbc).") + "  ║")
+        print("║" + pad("Validasi karakter tidak sensitif.") + "  ║")
+        print("║" + pad("Jangan lupa anda memiliki waktu terbatas untuk menjawab!") + "  ║")
+        print("╚" + "═" * (BOX_WIDTH - 2) + "╝")
+        input("Tekan Enter jika anda sudah siap!")
+    elif(diff=="4"):
+        clear_screen()
+        print("╔" + "═" * (BOX_WIDTH - 2) + "╗")
+        print("║" + "Cara Bermain".center(INNER_WIDTH) + "  ║")
+        print("║" + "Tingkat Kesulitan : Impossible".center(INNER_WIDTH) + "  ║")
+        print("╠" + "═" * (BOX_WIDTH - 2) + "╣")
+        print("║" + pad("Nanti ada Kombinasi kata yang akan ditampilkan berurutan.") + "  ║")
+        print("║" + pad("Setelah semua kombinasi muncul anda perlu mengetik ulang") + "  ║")
+        print("║" + pad("kombinasi yang ditampilkan.") + "  ║")
+        print("║" + pad("Contoh : 'nasi' 'Padang' adalah (nasi Padang).") + "  ║")
+        print("║" + pad("Validasi karakter sensitif.") + "  ║")
+        print("║" + pad("Memerlukan spasi setiap kata.") + "  ║")
+        print("║" + pad("Jangan lupa anda memiliki waktu terbatas untuk menjawab!") + "  ║")
+        print("╚" + "═" * (BOX_WIDTH - 2) + "╝")
+        input("Tekan Enter jika anda sudah siap!")
+
 def showCredits():
     print("╔" + "═" * (BOX_WIDTH - 2) + "╗")
     print("║" + "🧠  COGNITIVE TRIAL: MEMORY GAME  🧠".center(INNER_WIDTH) + "║")
@@ -358,7 +422,7 @@ def main():
 
         difficulty = input("Masukkan pilihan (1-5): ").strip()
 
-
+        showHowtoPlay(difficulty)
         if(difficulty == "5"):
             clear_screen()
             break
@@ -539,11 +603,11 @@ def main():
                 if difficulty == "1":
                     correct = arrowToWasd("".join(sequence))
                     print(f"Urutan yang benar (WASD): {correct}")
-                else:
-                    correct = "".join(sequence)
-                    if difficulty != "4":
-                        correct = correct.lower()
-                    print(f"Urutan yang benar: {correct}")
+                
+                correct = "".join(sequence)
+                if difficulty != "4":
+                    correct = correct.lower()
+                print(f"Urutan yang benar: {correct}")
                 print(f"Skor Akhir: {score}")
                 print("═" * (BOX_WIDTH))
                 input("Tekan Enter untuk kembali ke menu utama...")
