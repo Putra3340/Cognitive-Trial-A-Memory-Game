@@ -476,7 +476,7 @@ def main():
                 # advanced mode : waktu panjang sequence + 10 detik
                 answer = timed_input(">> ", len(sequence) + 10)
             elif(game_mode == "3"):
-                # extreme mode : waktu panjang sequence + 2 detik
+                # extreme mode : waktu panjang sequence + 10 detik
                 answer = timed_input(">> ", len(sequence) + 10)
 
             clear_screen()
