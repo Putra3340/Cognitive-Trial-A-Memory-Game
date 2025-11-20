@@ -77,7 +77,7 @@ def showCredits():
     print("╠" + "═" * (BOX_WIDTH - 2) + "╣")
     print("║" + pad("Developer 1 : Rahmad Dwi Syaputra") + "  ║")
     print("║" + pad("Developer 2 : Marcellino Putra Kurniawan") + "  ║")
-    print("║" + pad("SMKN 1 Dlanggu - XII RPL 3") + "  ║")
+    print("║" + pad("SMKN 1 Dlanggu - XII RPL 3 - SpeedRunners") + "  ║")
     print("╠" + "═" * (BOX_WIDTH - 2) + "╣")
     print("║" + pad("Thank you for playing!") + "  ║")
     print("╚" + "═" * (BOX_WIDTH - 2) + "╝")
@@ -246,7 +246,7 @@ def main():
     print("╔" + "═" * (BOX_WIDTH - 2) + "╗")
     print("║" + "🧠  COGNITIVE TRIAL: MEMORY GAME  🧠".center(INNER_WIDTH) + "║")
     print("╠" + "═" * (BOX_WIDTH - 2) + "╣")
-    print("║" + pad("Created by Puput") + "  ║")
+    print("║" + "Created by SpeedRunners".center(INNER_WIDTH) + "  ║")
     print("╠" + "═" * (BOX_WIDTH - 2) + "╣")
     print("║" + pad("Pilih Mode Game:") + "  ║")
     print("║" + pad("") + "  ║")
@@ -483,7 +483,7 @@ def main():
 
                 
                 # Unlock next gamemode advanced
-                if(score >= 70 and game_mode == "1" and difficulty == "4" and not alreadynotified and int(unlocked_modes) < 1):
+                if(score >= 60 and game_mode == "1" and difficulty == "4" and not alreadynotified and int(unlocked_modes) < 1):
                     clear_screen()
                     unlocked_modes = "1"
                     save_score()
